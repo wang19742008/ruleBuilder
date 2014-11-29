@@ -1,0 +1,169 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link href="./css/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"/>
+<link href="./css/jquery.appendGrid-1.4.1.css" rel="stylesheet"/>
+<script type="text/javascript" src="./js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="./js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="./js/jquery.appendGrid-1.4.1.js"></script>
+<script type="text/javascript" src="./js/rulebuilder.js"></script>
+<style type="text/css">
+.ui-widget-content { 
+border:0;
+background: #eee url(images/ui-bg_highlight-soft_100_eeeeee_1x100.png) 50% top repeat-x;
+color: #333;
+}
+</style>
+<script type="text/javascript">
+	var cfgData = [{"rule":"mediaType","params":[{"value":"other","percent":"100","target":"0"},{"value":"video","percent":"100","target":{"rule":"taobaoUser","params":[{"value":"true,false,","percent":"100","target":"0"}]}}]}] ;
+	
+	var rules = [
+		{
+			"name": "r1",
+			"text": "规则1-文本",
+			"vtype": "text"
+		},
+		{
+			"name": "r2",
+			"text": "规则2-select",
+			"vtype": "select",
+			"values": [
+				{
+					"name": "true",
+					"text": "是"
+				},
+				{
+					"name": "false",
+					"text": "否"
+				}
+			]
+		},
+		{
+			"name": "r3",
+			"text": "规则2-checkbox",
+			"vtype": "checkbox",
+			"values": [
+				{
+					"name": "cpc",
+					"text": "CPC"
+				},
+				{
+					"name": "cpm",
+					"text": "CPM"
+				},{
+					"name": "cps",
+					"text": "CPS"
+				}
+			]
+		}
+	];
+	/*
+	var rules = [
+		{"name":"taobaoUser","text":"淘宝用户","values":[
+			{"name":"true","text":"是"},
+			{"name":"false","text":"否"}
+		]},
+		{"name":"mediaType","text":"媒体类型","values":[
+			{"name":"video","text":"视频"},
+			{"name":"other","text":"其他"}
+		]},
+		{"name":"allUser","text":"所有用户","values":[
+			{"name":"true","text":"是"}
+		]}
+		];
+		*/
+	var dsp = {
+		item:{name:"item",text:"P4P单品"},
+		shop:{name:"shop",text:"P4P店铺"},
+		tanx:{name:"tanx",text:"TANX"}
+	};
+	var products = [
+		{name:"nativeEcomWall",text:"native电商墙",layout:[1,2],dsp:[dsp.item,dsp.shop]},
+		{name:"handleAppWall",text:"小把手应用墙",layout:[1,2],dsp:[dsp.item]},
+		{name:"ecomWebview",text:"H5电商墙",layout:[1,2]},
+		{name:"itaobao",text:"H5爱淘宝",layout:[1,2]},
+		{name:"tanx",text:"tanx应用",layout:[1,2],dsp:[dsp.tanx]}
+	];
+	
+	var targets = [
+		{"name":"nativeEcomWall_item","text":"native电商墙-单品",layout:[1,2]},
+		{"name":"handleAppWall_app","text":"小把手应用墙-xx",layout:[1,2]}
+	];
+	
+	var ruleBuilder;
+    $(function () {
+		//var targets = [{"name":"nativeEcomWall","text":"native电商墙"},{"name":"handleAppWall","text":"小把手应用墙"},{"name":"ecomWebview","text":"H5电商墙"},{"name":"itaobao","text":"H5爱淘宝"},{"name":"tanx","text":"tanx应用"}];
+        var targets = getTarget(1);
+		ruleBuilder = new RuleBuilder({'tableId':'tblAppendGrid',
+		'title':'流量规则',
+		'rules':rules,
+		'targets':targets
+		});
+    });
+	
+	function getTarget(layout){
+		var r = [];
+		$.each(products,function(i,d){
+			if(!d.layout || contains(d.layout,layout)){
+				if(!d.dsp){
+					r.push({name:d.name,text:d.text});
+				}else{
+					$.each(d.dsp,function(j,t){
+						var it = {};
+						if(t.name){
+							it.name = d.name + '_' + t.name;
+						}else{
+							it.name = d.name;
+						}
+						
+						if(t.text){
+							it.text = d.text+ '-' +t.text;
+						}else{
+							it.text = d.text;
+						}
+						
+						r.push(it);
+					});
+				}
+			}
+		});
+		return r;
+	}
+	function contains(arr, item){
+		for(var i=0;i<arr.length;i++){
+			if(arr[i] == item){
+				return true;
+			}
+		}
+		return false;
+	}
+	function add(){
+		ruleBuilder.addRow();
+	}
+	function addFirst(){
+		ruleBuilder.addFirstRow();
+	}
+	function load(){
+		var c = $('#txtval').val();
+		var json = eval('(' + c + ')');
+		ruleBuilder.load(json);
+	}
+	function getvalue(){
+		var s = ruleBuilder.getvalue();
+		//console.log(JSON.stringify(s));
+		$('#txtval').val(JSON.stringify(s));
+		
+	}
+</script>
+</head>
+<body>
+	<input type='button' value='value' onclick='getvalue()'/>
+	<input type='button' value='add' onclick='add()'/>
+	<input type='button' value='addFirst' onclick='addFirst()'/>
+	<input type='button' value='load' onclick='load()'/>
+	<br/>
+	<textarea id="txtval" rows="6" cols="70"></textarea>
+    <table id="tblAppendGrid"></table>
+	
+</body>
+</html>
