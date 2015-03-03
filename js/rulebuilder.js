@@ -105,6 +105,16 @@ RuleBuilder.prototype.getGridCols = function(){
 			if(cf.vtype == 'text'){
 				co.append('<input type="text" id="'+ (id+'_v') +'"/>');
 			}
+			if(cf.vtype == 'timeScope'){
+				$('<input>', { type: 'text', maxLength: 20, id: id + '_time1' }).css('width', '150px').appendTo(co).datetimepicker({format:'Y-m-d H:i'});
+				$('<span>-</span>').appendTo(co)
+				$('<input>', { type: 'text', maxLength: 20, id: id + '_time2' }).css('width', '150px').appendTo(co).datetimepicker({format:'Y-m-d H:i'});
+			}
+			if(cf.vtype == 'text2'){
+				$('<input>', { type: 'text', id: id + '_txt1' }).css('width', '150px').appendTo(co);
+				$('<span>-</span>').appendTo(co)
+				$('<input>', { type: 'text', id: id + '_txt2' }).css('width', '150px').appendTo(co);
+			}
 		});
 		return ctrl;
 	};
@@ -156,6 +166,16 @@ RuleBuilder.prototype.getGridCols = function(){
 		if(cf.vtype == 'text'){
 			rt = $('#'+ ctrlId).val();
 		}
+		if(cf.vtype == 'timeScope'){
+			var t1 = $('#'+ (idPrefix + '_val_' + uniqueIndex+'_time1')).val();
+			var t2 = $('#'+ (idPrefix + '_val_' + uniqueIndex+'_time2')).val();
+			rt = t1 + ',' + t2;
+		}
+		if(cf.vtype == 'text2'){
+			var t1 = $('#'+ (idPrefix + '_val_' + uniqueIndex+'_txt1')).val();
+			var t2 = $('#'+ (idPrefix + '_val_' + uniqueIndex+'_txt2')).val();
+			rt = t1 + ',' + t2;
+		}
 		return rt;
 	};
 	valCol.customSetter = function (idPrefix, name, uniqueIndex, value) {
@@ -179,6 +199,16 @@ RuleBuilder.prototype.getGridCols = function(){
 		}
 		if(cf.vtype == 'text'){
 			$('#'+ ctrlId).val(value);
+		}
+		if(cf.vtype == 'timeScope'){
+			var arr = value.split(',');
+			$('#'+ (idPrefix + '_val_' + uniqueIndex+'_time1')).val(arr[0]);
+			$('#'+ (idPrefix + '_val_' + uniqueIndex+'_time2')).val(arr[1]);
+		}
+		if(cf.vtype == 'text2'){
+			var arr = value.split(',');
+			$('#'+ (idPrefix + '_val_' + uniqueIndex+'_txt1')).val(arr[0]);
+			$('#'+ (idPrefix + '_val_' + uniqueIndex+'_txt2')).val(arr[1]);
 		}
 	};
 	
